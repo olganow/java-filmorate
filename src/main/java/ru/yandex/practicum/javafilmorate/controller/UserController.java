@@ -1,4 +1,5 @@
 package ru.yandex.practicum.javafilmorate.controller;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
@@ -13,7 +14,7 @@ import java.util.*;
 @Slf4j
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
-    private int userId = 1;
+    private static int userId = 1;
     private boolean isUserValid = false;
 
     @GetMapping
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User cerateUser(@Valid @RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         if (users.containsKey(user.getEmail()) || users.containsKey(user.getId())) {
             log.warn("This user is existed");
             throw new ValidationException("Thi s user is existed");

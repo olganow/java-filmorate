@@ -15,13 +15,9 @@ import java.util.*;
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
-    private int filmId = 1;
+    private static int filmId = 1;
     private boolean isFilmValid = false;
     private LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
-    //название не может быть пустым;
-    //максимальная длина описания — 200 символов;
-    //дата релиза — не раньше 28 декабря 1895 года;
-    //продолжительность фильма должна быть положительной.
 
     @GetMapping
     public List<Film> getFilm() {
@@ -31,20 +27,17 @@ public class FilmController {
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        if ( films.containsKey(film.getId())){
+        if (films.containsKey(film.getId())) {
             log.warn("This film is existed");
             throw new ValidationException("This film is existed");
         } else if (film.getReleaseDate().isBefore(minReleaseDate)) {
-            log.warn("The film release date is not correct ");
-            throw new ValidationException("This film is existed");
- /*       } else if (film.getName().trim().length() == 0) {
-            log.warn("The film name is empty");
-            throw new ValidationException("This film is existed");*/
-        } else{
+            log.warn("The film release date is not correct");
+            throw new ValidationException("The film release date is not correct");
+        } else {
             film.setId(filmId);
             films.put(filmId, film);
             filmId++;
-            log.info("The film has been added",film);
+            log.info("The film has been added", film);
         }
         return film;
     }

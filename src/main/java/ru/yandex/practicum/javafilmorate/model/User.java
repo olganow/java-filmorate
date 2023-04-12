@@ -13,7 +13,7 @@ import java.util.Objects;
 public class User {
     @NotNull(message = "User Id can't be empty")
     private int id;
-    @Email(message = "Email is not valid ")
+    @Email(message = "Email is not valid")
     @NotNull(message = "Email can't be empty")
     private String email;
     @NotNull(message = "Login can't be empty")
@@ -21,7 +21,7 @@ public class User {
     private String login;
     private String name;
 
-    @NotNull(message = "Birthday can't be empty")
+    @NotNull(message = "The birthday can't be empty")
     @Past(message = "The birthday has to be before today")
     private LocalDate birthday;
 
