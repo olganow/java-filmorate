@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
@@ -11,12 +12,11 @@ import java.util.Objects;
 
 @Data
 public class User {
-    @NotNull(message = "User Id can't be empty")
+
     private int id;
     @Email(message = "Email is not valid")
-    @NotNull(message = "Email can't be empty")
+    @NotEmpty(message = "Email can't be empty")
     private String email;
-    @NotNull(message = "Login can't be empty")
     @NotBlank(message = "Login can't be blank")
     private String login;
     private String name;

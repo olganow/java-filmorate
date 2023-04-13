@@ -8,13 +8,12 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
-    @NotNull(message = "Film Id can't be empty")
+
     private int id;
-    @NotNull(message = "Film name can't be empty")
+
     @NotBlank(message = "Film name can't be blank")
     private String name;
     @Size(max = 200, message = "Film description has to be less than 200 symbols")
-    @NotNull(message = "Film description can't be empty")
     @NotBlank(message = "Film description can't be blank")
     private String description;
     @NotNull(message = "The film release date can't be empty")

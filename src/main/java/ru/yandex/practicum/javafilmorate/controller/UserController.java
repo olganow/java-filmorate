@@ -15,7 +15,6 @@ import java.util.*;
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
     private static int userId = 1;
-    private boolean isUserValid = false;
 
     @GetMapping
     public List<User> getUsers() {

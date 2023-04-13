@@ -166,7 +166,7 @@ class UserControllerTest {
                 throw new ConstraintViolationException(violations);
             }
         });
-        Assertions.assertEquals("login: Login can't be empty, login: Login can't be blank",
+        Assertions.assertEquals("login: Login can't be blank",
                 exception.getMessage());
     }
 

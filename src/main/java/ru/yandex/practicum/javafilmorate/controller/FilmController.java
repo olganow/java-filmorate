@@ -16,7 +16,7 @@ public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
     private static int filmId = 1;
-    private boolean isFilmValid = false;
+    private boolean isFilmValidDate;
     private LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
     @GetMapping
@@ -27,10 +27,7 @@ public class FilmController {
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        if (films.containsKey(film.getId())) {
-            log.warn("This film is existed");
-            throw new ValidationException("This film is existed");
-        } else if (film.getReleaseDate().isBefore(minReleaseDate)) {
+        if (!isFilmValidDate(film)) {
             log.warn("The film release date is not correct");
             throw new ValidationException("The film release date is not correct");
         } else {
@@ -45,9 +42,12 @@ public class FilmController {
     @PutMapping
     public Film updated(@Valid @RequestBody Film film) {
         int id = film.getId();
-        if (films.containsKey(id)) {
+        if (films.containsKey(id) && isFilmValidDate(film)) {
             films.put(id, film);
-            log.info("The film been updated", film);
+            log.info("The film has been updated", film);
+        } else if (!isFilmValidDate(film)) {
+            log.warn("The film release date is not correct");
+            throw new ValidationException("The film release date is not correct");
         } else {
             log.warn("This film doesn't existed");
             throw new ValidationException("This film doesn't existed");
@@ -55,5 +55,11 @@ public class FilmController {
         return film;
     }
 
+    private boolean isFilmValidDate(Film film) {
+        if (film.getReleaseDate().isBefore(minReleaseDate)) {
+            isFilmValidDate = false;
+        } else isFilmValidDate = true;
+        return isFilmValidDate;
+    }
 
 }
