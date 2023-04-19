@@ -14,7 +14,7 @@ import java.util.*;
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
-    private static int filmId = 1;
+    private int filmId = 1;
 
     @GetMapping
     public List<Film> getFilm() {

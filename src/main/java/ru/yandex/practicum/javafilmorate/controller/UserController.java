@@ -14,7 +14,7 @@ import java.util.*;
 @Slf4j
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
-    private static int userId = 1;
+    private int userId = 1;
 
     @GetMapping
     public List<User> getUsers() {
