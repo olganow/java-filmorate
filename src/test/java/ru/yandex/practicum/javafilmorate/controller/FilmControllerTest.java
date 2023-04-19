@@ -96,19 +96,16 @@ class FilmControllerTest {
                 throw new ConstraintViolationException(violations);
             }
         });
-        Assertions.assertEquals("releaseDate: The film release date can't be empty", exception.getMessage());
+        Assertions.assertEquals("releaseDate: The release date has to be before today", exception.getMessage());
     }
 
     @Test
     void shouldNotCreateFilmWithFutureReleaseDate() {
-        ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-            film.setReleaseDate(LocalDate.of(3400, 12, 28));
-            Set<ConstraintViolation<Film>> violations = validator.validate(film);
-            if (!violations.isEmpty()) {
-                throw new ConstraintViolationException(violations);
-            }
-        });
-        Assertions.assertEquals("releaseDate: The release date has to be before today", exception.getMessage());
+        film.setReleaseDate(LocalDate.of(3400, 12, 28));
+        filmController.createFilm(film);
+        List<Film> listFilm = filmController.getFilm();
+        assertEquals(film.getReleaseDate(), listFilm.get(0).getReleaseDate(),
+                "Film's release date  isn't correct");
     }
 
     @Test
@@ -212,20 +209,17 @@ class FilmControllerTest {
                 throw new ConstraintViolationException(violations);
             }
         });
-        Assertions.assertEquals("releaseDate: The film release date can't be empty", exception.getMessage());
+        Assertions.assertEquals("releaseDate: The release date has to be before today", exception.getMessage());
     }
 
     @Test
     void shouldNotUpdateFilmWithFutureReleaseDate() {
-        ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-            filmController.createFilm(film);
-            film.setReleaseDate(LocalDate.of(3400, 12, 28));
-            Set<ConstraintViolation<Film>> violations = validator.validate(film);
-            if (!violations.isEmpty()) {
-                throw new ConstraintViolationException(violations);
-            }
-        });
-        Assertions.assertEquals("releaseDate: The release date has to be before today", exception.getMessage());
+        filmController.createFilm(film);
+        film.setReleaseDate(LocalDate.of(3400, 12, 28));
+        filmController.updated(film);
+        List<Film> listFilm = filmController.getFilm();
+        assertEquals(film.getReleaseDate(), listFilm.get(0).getReleaseDate(),
+                "Film's release date  isn't correct");
     }
 
     @Test

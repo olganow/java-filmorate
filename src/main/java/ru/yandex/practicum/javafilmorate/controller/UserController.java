@@ -23,20 +23,17 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getEmail()) || users.containsKey(user.getId())) {
-            log.warn("This user is existed");
-            throw new ValidationException("Thi s user is existed");
-        } else {
-            validateUserName(user);
-            user.setId(userId);
-            users.put(userId, user);
-            userId++;
-            log.info("The user has been added", user);
-        }
+        validateUserName(user);
+        user.setId(userId);
+        users.put(userId, user);
+        userId++;
+        log.info("The user has been added", user);
+
         return user;
     }
 
     @PutMapping
+    @ResponseBody
     public User updateUser(@Valid @RequestBody User user) {
         int id = user.getId();
         if (users.containsKey(id)) {
@@ -55,4 +52,6 @@ public class UserController {
             user.setName(user.getLogin());
         }
     }
+
+
 }

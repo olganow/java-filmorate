@@ -3,10 +3,7 @@ package ru.yandex.practicum.javafilmorate.model;
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -17,12 +14,13 @@ public class User {
     @Email(message = "Email is not valid")
     @NotEmpty(message = "Email can't be empty")
     private String email;
+    @Pattern(regexp = "^\\S*", message = "There is a space")
     @NotBlank(message = "Login can't be blank")
     private String login;
     private String name;
 
     @NotNull(message = "The birthday can't be empty")
-    @Past(message = "The birthday has to be before today")
+    @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {

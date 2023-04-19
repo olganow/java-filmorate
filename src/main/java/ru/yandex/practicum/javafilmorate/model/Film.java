@@ -1,6 +1,7 @@
 package ru.yandex.practicum.javafilmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.javafilmorate.validation.FilmReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -10,14 +11,12 @@ import java.time.LocalDate;
 public class Film {
 
     private int id;
-
     @NotBlank(message = "Film name can't be blank")
     private String name;
     @Size(max = 200, message = "Film description has to be less than 200 symbols")
     @NotBlank(message = "Film description can't be blank")
     private String description;
-    @NotNull(message = "The film release date can't be empty")
-    @Past(message = "The release date has to be before today")
+    @FilmReleaseDate(message = "The release date has to be before today")
     private LocalDate releaseDate;
     @NotNull(message = "The film duration can't be empty")
     @Positive(message = "The film duration can't be positive")
