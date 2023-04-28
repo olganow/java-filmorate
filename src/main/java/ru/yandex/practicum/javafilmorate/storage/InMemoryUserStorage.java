@@ -2,7 +2,8 @@ package ru.yandex.practicum.javafilmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.javafilmorate.exception.ValidationException;
+import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
+import ru.yandex.practicum.javafilmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.javafilmorate.model.User;
 
 import java.util.*;
@@ -21,24 +22,25 @@ public class InMemoryUserStorage implements UserStorage {
             user.setId(userId);
             users.put(userId, user);
             userId++;
-            log.info("The user has been added", user);
+            log.info("The user has been added to map", user);
+            System.out.println(user);
             return user;
         } else {
-            throw new ValidationException("User with userId = " + id + "is existed");
+            throw new UserAlreadyExistException("User with userId = " + id + "is existed");
         }
     }
 
     @Override
     public User getUserById(Integer id) {
         if (!users.containsKey(id)) {
-            throw new ValidationException("The user with userId = " + id + "isn't found");
+            throw new NotFoundException("The user with userId = " + id + "isn't found");
         }
         log.info("Get the user by Id");
         return users.get(id);
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAllUsers() {
         log.debug("Get all users");
         return new ArrayList<>(users.values());
     }
@@ -52,12 +54,11 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("The user has been updated", user);
         } else {
             log.warn("This user doesn't existed");
-            throw new ValidationException("This user doesn't existed");
+            throw new NotFoundException("This user doesn't existed");
         }
         log.info("The user with userId = " + id + "has been updated");
         return user;
     }
-
 
     private void validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {

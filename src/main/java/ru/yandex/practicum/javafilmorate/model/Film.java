@@ -24,6 +24,7 @@ public class Film {
     private Integer duration;
 
     private Set<Integer> likes;
+
     public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
         this.id = id;
         this.name = name;
@@ -31,6 +32,7 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
+
     public void deleteLike(Integer id) {
         likes.remove(id);
     }

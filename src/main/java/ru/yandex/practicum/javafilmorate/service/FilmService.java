@@ -3,11 +3,12 @@ package ru.yandex.practicum.javafilmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
+import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.storage.FilmStorage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,8 +31,8 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms() {
-        log.info("Get all film with id = ");
-        return filmStorage.getFilms();
+        log.info("Get all film");
+        return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(int filmId) {
@@ -48,8 +49,8 @@ public class FilmService {
     }
 
     public void removeLikes(int filmId, int like) {
-        if ( like < 0 || filmId < 0 ) {
-            throw new NotFoundException("Negative value is not allowed");
+        if (like < 0 || filmId < 0) {
+            throw new ValidationException("Negative value is not allowed");
         }
         Film film = getFilmById(filmId);
         film.deleteLike(like);
@@ -58,7 +59,10 @@ public class FilmService {
     }
 
     public List<Film> favoritesFilms(int amount) {
-        return filmStorage.getFilms();
+        return filmStorage.getAllFilms().stream()
+                .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
+                .limit(amount)
+                .collect(Collectors.toList());
     }
 
 }
