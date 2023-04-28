@@ -5,6 +5,7 @@ import ru.yandex.practicum.javafilmorate.validation.FilmReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
@@ -22,11 +23,15 @@ public class Film {
     @Positive(message = "The film duration can't be positive")
     private Integer duration;
 
+    private Set<Integer> likes;
     public Film(int id, String name, String description, LocalDate releaseDate, Integer duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+    public void deleteLike(Integer id) {
+        likes.remove(id);
     }
 }
