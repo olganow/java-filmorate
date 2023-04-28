@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 public class User {
@@ -22,6 +23,8 @@ public class User {
     @NotNull(message = "The birthday can't be empty")
     @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
+
+    protected Set<Integer> friends;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
