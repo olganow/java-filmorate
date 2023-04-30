@@ -5,13 +5,11 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 public class User {
-
-    private int id;
+    private long id;
     @Email(message = "Email is not valid")
     @NotEmpty(message = "Email can't be empty")
     private String email;
@@ -24,14 +22,15 @@ public class User {
     @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
 
-    private List<Integer> friends;
+    private Set<Long> friends;
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday,Set<Long> friends) {
         this.id = id;
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
+        this.friends = friends == null ? new HashSet<>() : friends;
     }
 
     @Override

@@ -11,19 +11,17 @@ import java.util.*;
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private int userId = 1;
-    private final Map<Integer, User> users = new HashMap<>();
+    private long userId = 1;
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User createUser(User user) {
-        int id = user.getId();
-        if (!users.containsKey(id)) {
-            validateUserName(user);
+        long id = user.getId();
+        if (!users.containsKey(id) || !users.containsKey(user.getEmail())) {
             user.setId(userId);
             users.put(userId, user);
             userId++;
             log.info("The user has been added to map", user);
-            System.out.println(user);
             return user;
         } else {
             throw new UserAlreadyExistException("User with userId = " + id + "is existed");
@@ -31,13 +29,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(Integer id) {
+    public User getUserById(Long id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException("The user with userId = " + id + "isn't found");
         }
         log.info("Get the user by Id");
         return users.get(id);
     }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -47,10 +46,10 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        int id = user.getId();
+        long id = user.getId();
         if (users.containsKey(id)) {
             validateUserName(user);
-            users.put(id, user);
+            users.replace(id, user);
             log.info("The user has been updated", user);
         } else {
             log.warn("This user doesn't existed");
