@@ -32,7 +32,7 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.likes  = new HashSet<>();
+        this.likes = new HashSet<>();
     }
 
 }

@@ -4,20 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
+import ru.yandex.practicum.javafilmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.javafilmorate.storage.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Slf4j
 @Service
+@Slf4j
 public class UserService {
-
     private final UserStorage userStorage;
+    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -25,11 +25,13 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        inMemoryUserStorage.validateUserName(user);
         log.info("The user has been created");
         return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
+        inMemoryUserStorage.validateUserName(user);
         log.info("The user with id = ", user.getId(), " has been updated");
         return userStorage.updateUser(user);
     }
@@ -45,24 +47,19 @@ public class UserService {
     }
 
 
-    public User addFriend(Long id, Long friendId) {
-        if (id == null || friendId == null) {
-            throw new NotFoundException("Negative value is not allowed");
-        }
+    public void addFriend(Long id, Long friendId) {
         if (getUserById(id).getFriends().contains(friendId)) {
-            log.warn("Пользователи уже друзья");
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "Пользователь " + id + " ужедружит с " + friendId);
-
+            log.info("The friend with id = ", friendId, " has been friend of the user with id =", id);
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "User " + id + " and the user " + friendId +
+                    "have been friends yet ");
         }
         User user = getUserById(id);
         User friend = getUserById(friendId);
-        friend.getFriends().add(friendId);
-        log.info("The friend with id = ", friendId, " has been added to the user with id =", id);
-        updateUser(user);
+        user.getFriends().add(friendId);
         friend.getFriends().add(id);
+
+        log.info("The friend with id = ", friendId, " has been added to the user with id =", id);
         log.info("The friend with id = ", id, " has been added to the user with id =", friendId);
-        updateUser(friend);
-        return user;
     }
 
     public void removeFriendById(long id, long friendId) {
@@ -71,9 +68,8 @@ public class UserService {
         user.getFriends().remove(friendId);
     }
 
-
-
     public List<User> getAllFriends(long id) {
+        log.info("Get All friends");
         return getUserById(id).getFriends()
                 .stream()
                 .map(this::getUserById)
@@ -81,16 +77,19 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long userId, long friendId) {
-        return getUserById(userId).getFriends()
-                .stream()
-                .filter(getUserById(friendId).getFriends()::contains)
-                .map(this::getUserById)
-                .collect(Collectors.toList());
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        if (user.getFriends() == null || friend.getFriends() == null) {
+            return new ArrayList<>();
+        } else if (user.getFriends().isEmpty() || friend.getFriends().isEmpty() ||
+                (user.getFriends().isEmpty() && friend.getFriends().isEmpty())) {
+            return new ArrayList<>();
+        } else {
+            log.info("Get common friends");
+            List friends = getAllFriends(userId);
+            friends.retainAll(getAllFriends(friendId));
+            return friends;
+        }
     }
-
-
 }
-
-
-
 
