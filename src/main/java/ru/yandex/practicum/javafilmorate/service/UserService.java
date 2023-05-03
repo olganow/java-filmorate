@@ -26,30 +26,30 @@ public class UserService {
 
     public User createUser(User user) {
         inMemoryUserStorage.validateUserName(user);
-        log.info("The user has been created");
+        log.info("The user with id = {} has been created, ", user.getId());
         return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
         inMemoryUserStorage.validateUserName(user);
-        log.info("The user with id = ", user.getId(), " has been updated");
+        log.info("The user with id = {}", user.getId(), " has been updated");
         return userStorage.updateUser(user);
     }
 
     public List<User> getAllUsers() {
-        log.info("Get all users with id = ");
+        log.info("Get {} users ", userStorage.getAllUsers().size() );
         return userStorage.getAllUsers();
     }
 
     public User getUserById(long id) {
-        log.info("Get the user with id = ", id);
+        log.info("Get the user with id = {}", id);
         return userStorage.getUserById(id);
     }
 
 
     public void addFriend(Long id, Long friendId) {
         if (getUserById(id).getFriends().contains(friendId)) {
-            log.info("The friend with id = ", friendId, " has been friend of the user with id =", id);
+            log.info("The friend with id = {}", friendId, " has been friend of the user with id = {}", id);
             throw new ValidationException(HttpStatus.BAD_REQUEST, "User " + id + " and the user " + friendId +
                     "have been friends yet ");
         }
@@ -58,13 +58,13 @@ public class UserService {
         user.getFriends().add(friendId);
         friend.getFriends().add(id);
 
-        log.info("The friend with id = ", friendId, " has been added to the user with id =", id);
-        log.info("The friend with id = ", id, " has been added to the user with id =", friendId);
+        log.info("The friend with id = {}", friendId, " has been added to the user with id = {}", id);
+        log.info("The friend with id = {}", id, " has been added to the user with id = {}", friendId);
     }
 
     public void removeFriendById(long id, long friendId) {
         User user = getUserById(id);
-        log.info("The friend with id = ", friendId, " has been removed to the user with id =", id);
+        log.info("The friend with id = {}", friendId, " has been removed to the user with id =", id);
         user.getFriends().remove(friendId);
     }
 

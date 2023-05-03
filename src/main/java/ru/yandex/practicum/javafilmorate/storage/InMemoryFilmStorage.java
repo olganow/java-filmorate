@@ -22,25 +22,25 @@ public class InMemoryFilmStorage implements FilmStorage {
             film.setId(filmId);
             films.put(filmId, film);
             filmId++;
-            log.info("The film has been added", film);
+            log.info("Create a film with id = {} ", film.getId());
             return film;
         } else {
-            throw new FilmAlreadyExistException("The film with filmId = " + id + "is existed");
+            throw new FilmAlreadyExistException("The film with filmId = {} " + id + "is existed");
         }
     }
 
     @Override
     public Film getFilmById(Integer id) {
         if (!films.containsKey(id)) {
-            throw new NotFoundException("The film with filmId = " + id + "isn't found");
+            throw new NotFoundException("The film with filmId = {}" + id + "isn't found");
         }
-        log.info("Get the film by Id");
+        log.info("Get the film by id = {}", id);
         return films.get(id);
     }
 
     @Override
     public List<Film> getAllFilms() {
-        log.info("Get all films");
+        log.info("Get {} films", films.values().size());
         return new ArrayList<>(films.values());
     }
 
@@ -50,7 +50,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         int id = film.getId();
         if (films.containsKey(id)) {
             films.put(id, film);
-            log.info("The film has been updated", film);
+            log.info("The film with id = {} has been updated", film.getId());
         } else {
             log.warn("This film doesn't existed");
             throw new NotFoundException("This film doesn't existed");

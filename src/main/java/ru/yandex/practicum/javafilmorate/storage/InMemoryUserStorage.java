@@ -24,7 +24,7 @@ public class InMemoryUserStorage implements UserStorage {
             user.setId(userId);
             users.put(userId, user);
             userId++;
-            log.info("The user has been added to map", user);
+            log.info("The user with id = {} has been added to map", user.getId());
             return user;
         } else {
             throw new UserAlreadyExistException("User with userId = " + id + "is existed");
@@ -36,14 +36,14 @@ public class InMemoryUserStorage implements UserStorage {
         if (!users.containsKey(id)) {
             throw new NotFoundException("The user with userId = " + id + "isn't found");
         }
-        log.info("Get the user by Id");
+        log.info("Get the user by Id {}", id);
         return users.get(id);
     }
 
 
     @Override
     public List<User> getAllUsers() {
-        log.debug("Get all users");
+        log.debug("Get {} users", users.values().size());
         return new ArrayList<>(users.values());
     }
 
@@ -53,12 +53,12 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             validateUserName(user);
             users.replace(id, user);
-            log.info("The user has been updated", user);
+            log.info("The user with id = {} has been updated", user);
         } else {
             log.warn("This user doesn't existed");
             throw new NotFoundException("This user doesn't existed");
         }
-        log.info("The user with userId = " + id + "has been updated");
+        log.info("The user with userId = {}" + id + "has been updated");
         return user;
     }
 

@@ -22,22 +22,22 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        log.info("Create the film");
+        log.info("Create a film with id = {} ", film.getId());
         return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        log.info("Update the film with id = ", film.getId());
+        log.info("Update the film with id = {} ", film.getId());
         return filmStorage.updateFilm(film);
     }
 
     public List<Film> getAllFilms() {
-        log.info("Get all film");
+        log.info("GET {} films", filmStorage.getAllFilms().size());
         return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(int filmId) {
-        log.info("Get the film with id = ", filmId);
+        log.info("Get the film with id = {} ", filmId);
         return filmStorage.getFilmById(filmId);
     }
 
@@ -45,12 +45,12 @@ public class FilmService {
         if (!getFilmById(filmId).getLikes().contains(userId)) {
             Film film = getFilmById(filmId);
             film.getLikes().add(userId);
-            log.info("A like added");
+            log.info("A like added to the film with id = {} ", filmId);
             updateFilm(film);
             return film;
         } else {
-            log.debug("Ошибка - пользователь не найден.");
-            throw new UserAlreadyExistException("Ошибка - пользователь не найден.");
+            log.debug("The user doesn't found");
+            throw new UserAlreadyExistException("The user doesn't found");
         }
     }
 
@@ -60,7 +60,7 @@ public class FilmService {
         }
         Film film = getFilmById(filmId);
         film.getLikes().remove(userID);
-        log.info("The like deleted");
+        log.info("The user with id = {} remove a like from the film id = {}", userID, filmId);
         updateFilm(film);
         return film;
     }
