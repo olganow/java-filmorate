@@ -19,7 +19,7 @@ public class ErrorHandlers {
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(ConstraintViolationException e) {
-     log.debug("Validation error: {}", e.getMessage());
+        log.debug("Validation error: {}", e.getMessage());
         return Map.of(
                 "error", e.getMessage()
         );

@@ -12,7 +12,7 @@ import java.util.Set;
 
 
 @Data
-@RequiredArgsConstructor
+@RequiredArgsConstructor //автоматически будет сгенерирован конструктор для финальных полей
 public class Film {
 
     private int id;

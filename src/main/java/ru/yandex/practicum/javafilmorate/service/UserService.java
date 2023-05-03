@@ -47,12 +47,12 @@ public class UserService {
 
 
     public void addFriend(Long id, Long friendId) {
-        if (getUserById(id).getFriends().contains(friendId)) {
+        User user = getUserById(id);
+        if (user.getFriends().contains(friendId)) {
             log.info("The friend with id = {}", friendId, " has been friend of the user with id = {}", id);
             throw new ValidationException(HttpStatus.BAD_REQUEST, "User " + id + " and the user " + friendId +
                     "have been friends yet ");
         }
-        User user = getUserById(id);
         User friend = getUserById(friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(id);

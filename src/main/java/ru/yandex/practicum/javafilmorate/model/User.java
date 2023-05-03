@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Data
-@RequiredArgsConstructor
+@RequiredArgsConstructor //автоматически будет сгенерирован конструктор для финальных полей
 public class User {
     private long id;
     @Email(message = "Email is not valid")

@@ -2,7 +2,6 @@ package ru.yandex.practicum.javafilmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.javafilmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Film;
 
@@ -17,16 +16,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
-        int id = film.getId();
-        if (!films.containsKey(id)) {
-            film.setId(filmId);
-            films.put(filmId, film);
-            filmId++;
-            log.info("Create a film with id = {} ", film.getId());
-            return film;
-        } else {
-            throw new FilmAlreadyExistException("The film with filmId = {} " + id + "is existed");
-        }
+        film.setId(filmId);
+        films.put(filmId, film);
+        filmId++;
+        log.info("Create a film with id = {} ", film.getId());
+        return film;
     }
 
     @Override
@@ -43,7 +37,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Get {} films", films.values().size());
         return new ArrayList<>(films.values());
     }
-
 
     @Override
     public Film updateFilm(Film film) {

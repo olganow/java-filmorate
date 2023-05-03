@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
-import ru.yandex.practicum.javafilmorate.exception.UserAlreadyExistException;
 
 import ru.yandex.practicum.javafilmorate.model.User;
 
@@ -18,16 +17,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        long id = user.getId();
-        if (!users.containsKey(id)) {
-            user.setId(userId);
-            users.put(userId, user);
-            userId++;
-            log.info("The user with id = {} has been added to map", user.getId());
-            return user;
-        } else {
-            throw new UserAlreadyExistException("User with userId = " + id + "is existed");
-        }
+        user.setId(userId);
+        users.put(userId, user);
+        userId++;
+        log.info("The user with id = {} has been added to map", user.getId());
+        return user;
     }
 
     @Override
@@ -38,7 +32,6 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Get the user by Id {}", id);
         return users.get(id);
     }
-
 
     @Override
     public List<User> getAllUsers() {
