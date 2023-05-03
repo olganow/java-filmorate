@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
-import ru.yandex.practicum.javafilmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.javafilmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
     private final UserStorage userStorage;
-    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -25,19 +24,19 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        inMemoryUserStorage.validateUserName(user);
+        validateUserName(user);
         log.info("The user with id = {} has been created, ", user.getId());
         return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
-        inMemoryUserStorage.validateUserName(user);
+        validateUserName(user);
         log.info("The user with id = {}", user.getId(), " has been updated");
         return userStorage.updateUser(user);
     }
 
     public List<User> getAllUsers() {
-        log.info("Get {} users ", userStorage.getAllUsers().size() );
+        log.info("Get {} users ", userStorage.getAllUsers().size());
         return userStorage.getAllUsers();
     }
 
@@ -77,18 +76,21 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long userId, long friendId) {
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        if (user.getFriends() == null || friend.getFriends() == null) {
-            return new ArrayList<>();
-        } else if (user.getFriends().isEmpty() || friend.getFriends().isEmpty() ||
-                (user.getFriends().isEmpty() && friend.getFriends().isEmpty())) {
-            return new ArrayList<>();
-        } else {
-            log.info("Get common friends");
-            List friends = getAllFriends(userId);
-            friends.retainAll(getAllFriends(friendId));
-            return friends;
+        log.info("Get common friends");
+        List<User> friends = getAllFriends(userId);
+        friends.retainAll(getAllFriends(friendId));
+        return friends;
+
+    }
+
+    public void validateUserName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+
+        if (user.getEmail() == null || (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now()) ||
+                user.getLogin() == null)) {
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "Login ist' valid");
         }
     }
 }

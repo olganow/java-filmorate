@@ -1,6 +1,8 @@
 package ru.yandex.practicum.javafilmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.*;
@@ -8,7 +10,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Data
-
+@RequiredArgsConstructor
 public class User {
     private long id;
     @Email(message = "Email is not valid")
@@ -22,17 +24,8 @@ public class User {
     @NotNull(message = "The birthday can't be empty")
     @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
-
-    private Set<Long> friends;
-
-    public User(long id, String email, String login, String name, LocalDate birthday) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-        this.friends = friends == null ? new HashSet<>() : friends;
-    }
+    @JsonIgnore
+    private Set<Long> friends = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -2,11 +2,13 @@ package ru.yandex.practicum.javafilmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.*;
 
 @RestController
@@ -57,8 +59,9 @@ public class FilmController {
         filmService.removeLikes(id, userId);
     }
 
+    @Validated
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(value = "count", defaultValue = "10") int count) {
+    public List<Film> getTopFilms(@Positive @RequestParam(value = "count", defaultValue = "10") int count) {
         log.debug("Get favorite films");
         return filmService.favoritesFilms(count);
     }

@@ -1,14 +1,13 @@
 package ru.yandex.practicum.javafilmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.exception.UserAlreadyExistException;
-import ru.yandex.practicum.javafilmorate.exception.ValidationException;
+
 import ru.yandex.practicum.javafilmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
@@ -20,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User createUser(User user) {
         long id = user.getId();
-        if (!users.containsKey(id) || !users.containsKey(user.getEmail())) {
+        if (!users.containsKey(id)) {
             user.setId(userId);
             users.put(userId, user);
             userId++;
@@ -51,7 +50,6 @@ public class InMemoryUserStorage implements UserStorage {
     public User updateUser(User user) {
         long id = user.getId();
         if (users.containsKey(id)) {
-            validateUserName(user);
             users.replace(id, user);
             log.info("The user with id = {} has been updated", user);
         } else {
@@ -62,14 +60,5 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public void validateUserName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
 
-        if (user.getEmail() == null || (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now()) ||
-                user.getLogin() == null)) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "Login ist' valid");
-        }
-    }
 }

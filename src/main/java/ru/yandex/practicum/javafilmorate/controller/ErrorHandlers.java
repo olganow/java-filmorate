@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.javafilmorate.exception.*;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ErrorHandlers {
 
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(final RuntimeException e) {
+    public Map<String, String> handleValidation(ConstraintViolationException e) {
      log.debug("Validation error: {}", e.getMessage());
         return Map.of(
                 "error", e.getMessage()

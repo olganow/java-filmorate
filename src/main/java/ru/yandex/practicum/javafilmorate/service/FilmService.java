@@ -42,11 +42,10 @@ public class FilmService {
     }
 
     public Film addLikes(int filmId, int userId) {
-        if (!getFilmById(filmId).getLikes().contains(userId)) {
-            Film film = getFilmById(filmId);
+        Film film = getFilmById(filmId);
+        if (!film.getLikes().contains(userId)) {
             film.getLikes().add(userId);
             log.info("A like added to the film with id = {} ", filmId);
-            updateFilm(film);
             return film;
         } else {
             log.debug("The user doesn't found");
@@ -61,14 +60,10 @@ public class FilmService {
         Film film = getFilmById(filmId);
         film.getLikes().remove(userID);
         log.info("The user with id = {} remove a like from the film id = {}", userID, filmId);
-        updateFilm(film);
         return film;
     }
 
     public List<Film> favoritesFilms(Integer number) {
-        if (number == null) {
-            number = 10;
-        }
         return filmStorage.getAllFilms().stream()
                 .sorted(Collections.reverseOrder(Comparator.comparingInt(film -> film.getLikes().size())))
                 .limit(number)
