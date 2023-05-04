@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.*;
+
 @Builder
 @Data
 public class User {
