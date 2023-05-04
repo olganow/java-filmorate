@@ -27,21 +27,29 @@ class FilmControllerTest {
     private Film film;
     private Validator validator;
     public static UserStorage userStorage;
+    private Set<Integer> likes;
 
     @BeforeEach
     void beforeEach() {
         FilmStorage filmStorage = new InMemoryFilmStorage();
         userStorage = new InMemoryUserStorage();
         filmController = new FilmController(new FilmService(filmStorage));
-        film = new Film(0, "Chicken Run", "Chicken Run is a 2000 stop-motion animated adventure " +
-                "comedy film produced by Pathé and Aardman Animations in partnership with",
-                LocalDate.of(2000, 12, 28), 200);
+
+        film = Film.builder()
+                .id(0)
+                .name("Chicken Run")
+                .description("Chicken Run is a 2000 stop-motion animated adventure " +
+                        "comedy film produced by Pathé and Aardman Animations in partnership with")
+                .releaseDate(LocalDate.of(2000, 12, 28))
+                .duration(2)
+                .build();
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
     @Test
     void shouldCreateFilm() {
+
         filmController.addFilm(film);
         List<Film> listFilm = filmController.getAllFilms();
         assertEquals(1, listFilm.size(), "Number of films isn't correct");

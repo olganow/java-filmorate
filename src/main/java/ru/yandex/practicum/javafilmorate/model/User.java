@@ -1,16 +1,15 @@
 package ru.yandex.practicum.javafilmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.*;
-
+@Builder
 @Data
-@RequiredArgsConstructor //автоматически будет сгенерирован конструктор для финальных полей
 public class User {
     private long id;
     @Email(message = "Email is not valid")
@@ -26,6 +25,12 @@ public class User {
     private LocalDate birthday;
     @JsonIgnore
     private Set<Long> friends = new HashSet<>();
+    public Set<Long> getFriends() {
+        if (friends == null) {
+            friends = new HashSet<>();
+        }
+        return friends;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,8 +1,8 @@
 package ru.yandex.practicum.javafilmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.javafilmorate.validation.FilmReleaseDate;
 
 import javax.validation.constraints.*;
@@ -10,9 +10,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Builder
 @Data
-@RequiredArgsConstructor //автоматически будет сгенерирован конструктор для финальных полей
 public class Film {
 
     private int id;
@@ -28,5 +27,11 @@ public class Film {
     private Integer duration;
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
+    public Set<Integer> getLikes() {
+        if (likes == null) {
+            likes = new HashSet<>();
+        }
+        return likes;
+    }
 
 }

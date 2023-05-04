@@ -13,6 +13,7 @@ import ru.yandex.practicum.javafilmorate.storage.InMemoryUserStorage;
 
 import javax.validation.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,13 +25,19 @@ class UserControllerTest {
     private static UserController userController;
     private User user;
     private Validator validator;
-
+    private Set<Long> friends = new HashSet<>();
 
     @BeforeEach
     void beforeEach() {
         userController = new UserController(new UserService(new InMemoryUserStorage()));
-        user = new User(0, "mail@mail.ru", "dolore", "Nick Name",
-                LocalDate.of(1895, 12, 28));
+        user = User.builder()
+                .id(0)
+                .email("mail@mail.ru")
+                .login("dolore")
+                .name("Nick Name")
+                .birthday(LocalDate.of(1885, 12, 28))
+                .build();
+
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
