@@ -37,8 +37,13 @@ public class FilmService {
     }
 
     public Film getFilmById(int filmId) {
-        log.info("Get the film with id = {} ", filmId);
-        return filmStorage.getFilmById(filmId);
+        Optional<Film> film = filmStorage.getFilmById(filmId);
+        if (film.isPresent()) {
+            log.info("Get the film with id = {} ", filmId);
+            return film.get();
+        } else {
+            throw new NotFoundException("The film with id =" + filmId + " not found");
+        }
     }
 
     public Film addLikes(int filmId, int userId) {

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
 import ru.yandex.practicum.javafilmorate.storage.UserStorage;
@@ -41,7 +42,13 @@ public class UserService {
 
     public User getUserById(long id) {
         log.info("Get the user with id = {}", id);
-        return userStorage.getUserById(id);
+        Optional<User> user = userStorage.getUserById(id);
+        if (user.isPresent()) {
+            log.info("Get the user with id = {}", id);
+            return user.get();
+        } else {
+            throw new NotFoundException("User with id = " + id + " not found");
+        }
     }
 
 
