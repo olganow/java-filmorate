@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("This user doesn't existed");
             throw new NotFoundException("This user doesn't existed");
         }
-        log.info("The user with userId = {}" + id + "has been updated");
+        log.info("The user with userId = {} {}", id, "has been updated");
         return user;
     }
 

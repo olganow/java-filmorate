@@ -24,15 +24,9 @@ public class User {
     @NotNull(message = "The birthday can't be empty")
     @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
-    @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
 
-    public Set<Long> getFriends() {
-        if (friends == null) {
-            friends = new HashSet<>();
-        }
-        return friends;
-    }
+    @JsonIgnore
+    final Set<Long> friends = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

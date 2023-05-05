@@ -2,7 +2,6 @@ package ru.yandex.practicum.javafilmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.javafilmorate.model.User;
 import ru.yandex.practicum.javafilmorate.service.UserService;
@@ -17,8 +16,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -47,13 +44,13 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable long id, @PathVariable long friendId) {
-        log.info("The friend with id = {}", friendId, " has been added to the user with id = {}", id);
+        log.info("The friend with id = {} {} {}", friendId, " has been added to the user with id = ", id);
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriendById(@PathVariable long id, @PathVariable long friendId) {
-        log.info("The friend with id = ", friendId, " has been removed from user with id = {}", id);
+        log.info("The friend with id = {} {} {}", friendId, " has been removed from user with id = ", id);
         userService.removeFriendById(id, friendId);
     }
 

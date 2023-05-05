@@ -16,9 +16,10 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandlers {
 
-    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class,
+            ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(ConstraintViolationException e) {
+    public Map<String, String> handleValidation(RuntimeException e) {
         log.debug("Validation error: {}", e.getMessage());
         return Map.of(
                 "error", e.getMessage()

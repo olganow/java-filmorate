@@ -8,7 +8,6 @@ import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
 import ru.yandex.practicum.javafilmorate.storage.UserStorage;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public class UserService {
 
     public User updateUser(User user) {
         validateUserName(user);
-        log.info("The user with id = {}", user.getId(), " has been updated");
+        log.info("The user with id = {} {}", user.getId(), " has been updated");
         return userStorage.updateUser(user);
     }
 
@@ -49,7 +48,7 @@ public class UserService {
     public void addFriend(Long id, Long friendId) {
         User user = getUserById(id);
         if (user.getFriends().contains(friendId)) {
-            log.info("The friend with id = {}", friendId, " has been friend of the user with id = {}", id);
+            log.info("The friend with id = {} {} {}", friendId, " has been friend of the user with id = {}", id);
             throw new ValidationException(HttpStatus.BAD_REQUEST, "User " + id + " and the user " + friendId +
                     "have been friends yet ");
         }
@@ -57,13 +56,13 @@ public class UserService {
         user.getFriends().add(friendId);
         friend.getFriends().add(id);
 
-        log.info("The friend with id = {}", friendId, " has been added to the user with id = {}", id);
-        log.info("The friend with id = {}", id, " has been added to the user with id = {}", friendId);
+        log.info("The friend with id = {} {} {}", friendId, " has been added to the user with id = ", id);
+        log.info("The friend with id = {} {} {}", id, " has been added to the user with id = ", friendId);
     }
 
     public void removeFriendById(long id, long friendId) {
         User user = getUserById(id);
-        log.info("The friend with id = {}", friendId, " has been removed to the user with id =", id);
+        log.info("The friend with id = {}{}{}", friendId, " has been removed to the user with id = ", id);
         user.getFriends().remove(friendId);
     }
 
@@ -86,11 +85,6 @@ public class UserService {
     public void validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-        }
-
-        if (user.getEmail() == null || (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now()) ||
-                user.getLogin() == null)) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "Login ist' valid");
         }
     }
 }

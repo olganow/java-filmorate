@@ -48,7 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("This film doesn't existed");
             throw new NotFoundException("This film doesn't existed");
         }
-        log.info("The film with filmId = " + id + "has been updated");
+        log.info("The film with filmId = {} {}", id, "has been updated");
         return film;
     }
 }

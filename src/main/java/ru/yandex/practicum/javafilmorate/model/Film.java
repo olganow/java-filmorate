@@ -26,13 +26,6 @@ public class Film {
     @Positive(message = "The film duration can't be positive")
     private Integer duration;
     @JsonIgnore
-    private Set<Integer> likes = new HashSet<>();
-
-    public Set<Integer> getLikes() {
-        if (likes == null) {
-            likes = new HashSet<>();
-        }
-        return likes;
-    }
+    final Set<Integer> likes = new HashSet<>();
 
 }
