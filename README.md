@@ -15,7 +15,8 @@
 
 x
 На диаграмме ниже представлен визуальный обзор базы данных Java-filmorate project и связей между таблицами.
-![Java-filmorate project data base](filmorate_db.png)
+![Java-filmorate project data base](src/main/resources/db_schema_filmorate.png)
+[исходник](https://drive.google.com/file/d/17gcUk-WAB-lGO7vxh1_Y3huA4FsSxDjn/view)
 
 В приведенном ниже обзоре Таблиц, содержатся дополнительные сведения о таблицах и столбцах базы данных.
 - film: содержит данные о фильме.
