@@ -12,7 +12,7 @@ import java.util.*;
 @Builder
 @Data
 public class User {
-    private long id;
+    private Integer id;
     @Email(message = "Email is not valid")
     @NotEmpty(message = "Email can't be empty")
     private String email;
@@ -26,7 +26,15 @@ public class User {
     private LocalDate birthday;
 
     @JsonIgnore
-    final Set<Long> friends = new HashSet<>();
+    final Set<Integer> friends = new HashSet<>();
+
+    public User(Integer id, String login, String name, String email, LocalDate birthday) {
+        this.id = id;
+        this.login = login;
+        this.name = name;
+        this.email = email;
+        this.birthday = birthday;
+    }
 
     @Override
     public boolean equals(Object o) {

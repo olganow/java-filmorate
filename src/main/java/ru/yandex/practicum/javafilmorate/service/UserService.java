@@ -1,13 +1,14 @@
 package ru.yandex.practicum.javafilmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.javafilmorate.dao.UserDao;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
-import ru.yandex.practicum.javafilmorate.storage.UserStorage;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,13 +16,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final UserDao userStorage;
+
 
     public User createUser(User user) {
         validateUserName(user);
@@ -40,7 +39,7 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
-    public User getUserById(long id) {
+    public User getUserById(int id) {
         log.info("Get the user with id = {}", id);
         Optional<User> user = userStorage.getUserById(id);
         if (user.isPresent()) {
@@ -51,8 +50,7 @@ public class UserService {
         }
     }
 
-
-    public void addFriend(Long id, Long friendId) {
+    public void addFriend(int id, int friendId) {
         User user = getUserById(id);
         if (user.getFriends().contains(friendId)) {
             log.info("The friend with id = {} {} {}", friendId, " has been friend of the user with id = {}", id);
@@ -67,13 +65,13 @@ public class UserService {
         log.info("The friend with id = {} {} {}", id, " has been added to the user with id = ", friendId);
     }
 
-    public void removeFriendById(long id, long friendId) {
+    public void removeFriendById(int id, int friendId) {
         User user = getUserById(id);
         log.info("The friend with id = {}{}{}", friendId, " has been removed to the user with id = ", id);
         user.getFriends().remove(friendId);
     }
 
-    public List<User> getAllFriends(long id) {
+    public List<User> getAllFriends(int id) {
         log.info("Get All friends");
         return getUserById(id).getFriends()
                 .stream()
@@ -81,18 +79,16 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriends(long userId, long friendId) {
+    public List<User> getCommonFriends(int userId, int friendId) {
         log.info("Get common friends");
         List<User> friends = getAllFriends(userId);
         friends.retainAll(getAllFriends(friendId));
         return friends;
 
     }
-
     public void validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }
 }
-
