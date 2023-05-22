@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.javafilmorate.dao.UserDao;
+import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.User;
 
 import java.sql.PreparedStatement;
@@ -15,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -53,9 +53,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional getUserById(int id) {
+    public User getUserById(int id) {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
-        return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::makeUser));
+        return jdbcTemplate.queryForObject(sqlQuery, this::makeUser, id);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> commonFriends(int id, int friendId) {
+    public List<User> getCommonFriends(int id, int friendId) {
         String sqlQuery = "SELECT * FROM users WHERE id IN (SELECT id FROM (SELECT friend_user_id AS id"
                 + " FROM friendship WHERE user_id = ?) AS ui "
                 + "INNER JOIN (SELECT friend_user_id FROM friendship WHERE user_id = ?)" +
@@ -107,8 +107,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> allFriends(int id) {
-        String sqlQuery = "SELECT * FROM users WHERE id IN (SELECT friend_user_id AS id FROM friends" +
+    public List<User> getAllFriends(int id) {
+        String sqlQuery = "SELECT * FROM users WHERE id IN (SELECT friend_user_id AS id FROM friendship" +
                 " WHERE user_id = ?) ORDER BY id ";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id);
         List<User> friends = new ArrayList<>();
@@ -122,4 +122,12 @@ public class UserDaoImpl implements UserDao {
         return friends;
     }
 
+    @Override
+    public void isUserExisted(int id) {
+        String sqlQuery = "SELECT id FROM users WHERE id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
+        if (!rowSet.next()) {
+            throw new NotFoundException("User with id= " + id + " doesn't exist...");
+        }
+    }
 }

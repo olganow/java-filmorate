@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.javafilmorate.dao.UserDao;
-import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.exception.ValidationException;
 import ru.yandex.practicum.javafilmorate.model.User;
 
@@ -30,6 +29,7 @@ public class UserService {
 
     public User updateUser(User user) {
         validateUserName(user);
+        userStorage.isUserExisted(user.getId());
         log.info("The user with id = {} {}", user.getId(), " has been updated");
         return userStorage.updateUser(user);
     }
@@ -40,17 +40,16 @@ public class UserService {
     }
 
     public User getUserById(int id) {
+        userStorage.isUserExisted(id);
         log.info("Get the user with id = {}", id);
-        Optional<User> user = userStorage.getUserById(id);
-        if (user.isPresent()) {
-            log.info("Get the user with id = {}", id);
-            return user.get();
-        } else {
-            throw new NotFoundException("User with id = " + id + " not found");
-        }
+        User user = userStorage.getUserById(id);
+        log.info("Get the user with id = {}", id);
+        return user;
     }
 
     public void addFriend(int id, int friendId) {
+        userStorage.isUserExisted(id);
+        userStorage.isUserExisted(friendId);
         User user = getUserById(id);
         if (user.getFriends().contains(friendId)) {
             log.info("The friend with id = {} {} {}", friendId, " has been friend of the user with id = {}", id);
@@ -86,6 +85,7 @@ public class UserService {
         return friends;
 
     }
+
     public void validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
