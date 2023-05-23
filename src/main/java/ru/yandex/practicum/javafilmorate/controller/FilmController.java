@@ -2,6 +2,7 @@ package ru.yandex.practicum.javafilmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.javafilmorate.model.Film;
@@ -20,7 +21,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody @NotNull Film film) {
         log.info("Create a film with id = {} ", film.getId());
         return filmService.createFilm(film);
     }
