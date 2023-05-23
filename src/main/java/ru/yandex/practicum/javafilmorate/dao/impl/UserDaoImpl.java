@@ -1,5 +1,8 @@
 package ru.yandex.practicum.javafilmorate.dao.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -19,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
@@ -28,7 +32,8 @@ public class UserDaoImpl implements UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private User makeUser(ResultSet rs, int rowNum) throws SQLException {
+    private @NotNull User makeUser(ResultSet rs, int rowNum) throws SQLException {
+        log.info("Make users");
         return new User(rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("login"),
@@ -37,7 +42,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(@NotNull User user) {
         String sqlQuery = "INSERT INTO users (name,login,email,birthday) VALUES (?,?,?,?)";        //Используйте KeyHolder для получения идентификатора записи вставки Spring JdbcTemplate
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -49,17 +54,19 @@ public class UserDaoImpl implements UserDao {
             return ps;
         }, keyHolder);
         user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        log.info("Create users");
         return user;
     }
 
     @Override
     public User getUserById(int id) {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
+        log.info("Get user with id = {}", id);
         return jdbcTemplate.queryForObject(sqlQuery, this::makeUser, id);
     }
 
     @Override
-    public User updateUser(User user) {
+    public User updateUser(@NotNull User user) {
         String sqlQuery = "UPDATE users SET " +
                 "name = ?," +
                 "login = ?," +
@@ -67,42 +74,47 @@ public class UserDaoImpl implements UserDao {
                 "birthday = ?" +
                 "WHERE id = ?";
         jdbcTemplate.update(sqlQuery, user.getLogin(), user.getName(), user.getEmail(), user.getBirthday(), user.getId());
+        log.info("Update user with id = {}", user.getId());
         return user;
     }
 
     @Override
     public List<User> getAllUsers() {
         String sqlQuery = "SELECT * FROM users";
+        log.info("Get All user");
         return jdbcTemplate.query(sqlQuery, this::makeUser);
     }
 
     @Override
     public void addFriend(int id, int friendId) {
         String sqlQuery = "INSERT INTO friendship (user_id,friend_user_id) VALUES (?,?)";
+        log.info("Add friend with id = {} to user with id = {}", friendId, id);
         jdbcTemplate.update(sqlQuery, id, friendId);
     }
 
     @Override
     public void delete(int id, int friendId) {
         String sqlQuery = "DELETE FROM friendship WHERE user_id = ? AND friend_user_id = ?";
+        log.info("Delete friend with id = {} to user with id = {}",friendId, id);
         jdbcTemplate.update(sqlQuery, id, friendId);
     }
 
     @Override
     public List<User> getCommonFriends(int id, int friendId) {
-        String sqlQuery = "SELECT * FROM users WHERE id IN (SELECT id FROM (SELECT friend_user_id AS id"
-                + " FROM friendship WHERE user_id = ?) AS ui "
-                + "INNER JOIN (SELECT friend_user_id FROM friendship WHERE user_id = ?)" +
-                " AS f ON ui.id = f.friend_user_id) ORDER BY id";
+        String sqlQuery = "SELECT users.* " +
+                "FROM users " +
+                "JOIN FRIENDSHIP AS f1 on(users.id = f1.friend_id AND f1.user_id = ?) " +
+                "JOIN FRIENDSHIP AS f2 on (users.id = f2.friend_id AND f2.user_id =?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id, friendId);
         List<User> commonFriends = new ArrayList<>();
         while (rs.next()) {
             commonFriends.add(new User(rs.getInt("id"),
-                    rs.getString("login"),
                     rs.getString("name"),
+                    rs.getString("login"),
                     rs.getString("email"),
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
         }
+        log.info("Get common te friend");
         return commonFriends.stream().distinct().collect(Collectors.toList());
     }
 
@@ -114,11 +126,12 @@ public class UserDaoImpl implements UserDao {
         List<User> friends = new ArrayList<>();
         while (rs.next()) {
             friends.add(new User(rs.getInt("id"),
-                    rs.getString("login"),
                     rs.getString("name"),
+                    rs.getString("login"),
                     rs.getString("email"),
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
         }
+        log.info("Get All friends of user with id = {}", id);
         return friends;
     }
 
