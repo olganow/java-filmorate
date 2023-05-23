@@ -7,8 +7,8 @@ VALUES
 ('R','лицам до 17 лет просматривать фильм можно только в присутствии взрослого'),
 ('NC-17','лицам до 18 лет просмотр запрещён');
 
-DELETE FROM genre;
-INSERT INTO genre (name)
+DELETE FROM genres;
+INSERT INTO genres (name)
 VALUES
 ('Комедия'),
 ('Драма'),
