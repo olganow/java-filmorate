@@ -2,7 +2,7 @@ package ru.yandex.practicum.javafilmorate.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.javafilmorate.dao.GenreDao;
+import ru.yandex.practicum.javafilmorate.storage.GenreDao;
 import ru.yandex.practicum.javafilmorate.model.Genre;
 
 import java.util.List;

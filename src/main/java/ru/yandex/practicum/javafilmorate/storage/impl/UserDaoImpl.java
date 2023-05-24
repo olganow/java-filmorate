@@ -1,4 +1,4 @@
-package ru.yandex.practicum.javafilmorate.dao.impl;
+package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.javafilmorate.dao.UserDao;
+import ru.yandex.practicum.javafilmorate.storage.UserDao;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.User;
 

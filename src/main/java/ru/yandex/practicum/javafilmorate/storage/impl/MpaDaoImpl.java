@@ -1,10 +1,10 @@
-package ru.yandex.practicum.javafilmorate.dao.impl;
+package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.javafilmorate.dao.MpaDao;
+import ru.yandex.practicum.javafilmorate.storage.MpaDao;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Mpa;
 

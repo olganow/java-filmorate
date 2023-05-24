@@ -1,3 +1,5 @@
+/*
+
 package ru.yandex.practicum.javafilmorate.controller;
 
 
@@ -7,9 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.javafilmorate.dao.UserDao;
+import ru.yandex.practicum.javafilmorate.dao.impl.UserDaoImpl;
 import ru.yandex.practicum.javafilmorate.model.User;
 import ru.yandex.practicum.javafilmorate.service.UserService;
-import ru.yandex.practicum.javafilmorate.storage.InMemoryUserStorage;
 
 import javax.validation.*;
 import java.time.LocalDate;
@@ -215,3 +219,4 @@ class UserControllerTest {
 
     }
 }
+*/

@@ -1,11 +1,11 @@
-package ru.yandex.practicum.javafilmorate.dao.impl;
+package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.javafilmorate.dao.GenreDao;
+import ru.yandex.practicum.javafilmorate.storage.GenreDao;
 
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Film;

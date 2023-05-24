@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.yandex.practicum.javafilmorate.dao.UserDao;
+import ru.yandex.practicum.javafilmorate.storage.UserDao;
 import ru.yandex.practicum.javafilmorate.model.User;
 
 import javax.validation.*;

@@ -3,7 +3,7 @@ package ru.yandex.practicum.javafilmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.javafilmorate.dao.UserDao;
+import ru.yandex.practicum.javafilmorate.storage.UserDao;
 import ru.yandex.practicum.javafilmorate.model.User;
 
 

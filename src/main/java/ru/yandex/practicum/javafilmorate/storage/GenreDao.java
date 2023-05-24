@@ -1,4 +1,4 @@
-package ru.yandex.practicum.javafilmorate.dao;
+package ru.yandex.practicum.javafilmorate.storage;
 
 import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.model.Genre;
