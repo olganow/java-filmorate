@@ -46,7 +46,7 @@ public class UserService {
     public void addFriend(int id, int friendId) {
         userStorage.isUserExisted(id);
         userStorage.isUserExisted(friendId);
-        userStorage.addFriend(id,friendId);
+        userStorage.addFriend(id, friendId);
         log.info("The friend with id = {} {} {}", friendId, " has been added to the user with id = ", id);
         log.info("The friend with id = {} {} {}", id, " has been added to the user with id = ", friendId);
     }
@@ -55,12 +55,12 @@ public class UserService {
         User user = getUserById(id);
         log.info("The friend with id = {}{}{}", friendId, " has been removed to the user with id = ", id);
         user.getFriends().remove(friendId);
+        userStorage.delete(id, friendId);
     }
 
     public List<User> getAllFriends(int id) {
-        log.info("Get All friends");
         List<User> friends = new ArrayList<>(userStorage.getAllFriends(id));
-        log.info("Get All friends--");
+        log.info("Get All friends");
         return friends;
     }
 

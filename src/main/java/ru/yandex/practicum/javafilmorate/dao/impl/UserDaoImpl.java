@@ -95,7 +95,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void delete(int id, int friendId) {
         String sqlQuery = "DELETE FROM friendship WHERE user_id = ? AND friend_user_id = ?";
-        log.info("Delete friend with id = {} to user with id = {}",friendId, id);
+        log.info("Delete friend with id = {} to user with id = {}", friendId, id);
         jdbcTemplate.update(sqlQuery, id, friendId);
     }
 
@@ -120,8 +120,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAllFriends(int id) {
-        String sqlQuery = "SELECT * FROM users WHERE id IN (SELECT friend_user_id AS id FROM friendship" +
-                " WHERE user_id = ?) ORDER BY id ";
+        String sqlQuery = "SELECT * FROM users WHERE id IN " +
+                "(SELECT friend_user_id AS id FROM friendship WHERE user_id = ?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id);
         List<User> friends = new ArrayList<>();
         while (rs.next()) {
@@ -132,6 +132,9 @@ public class UserDaoImpl implements UserDao {
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
         }
         log.info("Get All friends of user with id = {}", id);
+        for (User friend : friends) {
+            System.out.println(friend.toString());
+        }
         return friends;
     }
 

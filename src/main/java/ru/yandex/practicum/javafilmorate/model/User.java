@@ -3,6 +3,7 @@ package ru.yandex.practicum.javafilmorate.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.*;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Builder
+@RequiredArgsConstructor
 @Data
 public class User {
     private Integer id;
@@ -27,6 +29,13 @@ public class User {
 
     @JsonIgnore
     final Set<Integer> friends = new HashSet<>();
+
+    public User(String login, String name, String email, LocalDate birthday) {
+        this.login = login;
+        this.name = name;
+        this.email = email;
+        this.birthday = birthday;
+    }
 
     public User(Integer id, String login, String name, String email, LocalDate birthday) {
         this.id = id;
