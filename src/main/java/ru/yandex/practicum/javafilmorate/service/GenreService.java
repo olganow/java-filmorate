@@ -10,21 +10,21 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class GenreService {
-    private final GenreDao GenreStorage;
+    private final GenreDao genreStorage;
 
     public List<Genre> getAllGenres() {
-        return GenreStorage.getAllGenres();
+        return genreStorage.getAllGenres();
     }
 
     public Genre getGenreById(int id) {
-        return GenreStorage.getGenreById(id);
+        return genreStorage.getGenreById(id);
     }
 
     public Genre getGenreById(Integer id) {
-        return GenreStorage.getGenreById(id);
+        return genreStorage.getGenreById(id);
     }
 
     public List<Genre> getGenres() {
-        return GenreStorage.getAllGenres();
+        return genreStorage.getAllGenres();
     }
 }

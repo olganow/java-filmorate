@@ -13,13 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MpaService {
 
-    private final MpaDao MpaStorage;
+    private final MpaDao mpaStorage;
 
     public Mpa getMpaById(Integer id) {
-        return MpaStorage.getMpaById(id);
+        return mpaStorage.getMpaById(id);
     }
 
     public List<Mpa> getAllMpa() {
-        return MpaStorage.getAllMpa();
+        return mpaStorage.getAllMpa();
     }
 }
