@@ -1,7 +1,6 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -16,17 +15,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class GenreDaoImpl implements GenreDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public GenreDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     @Override
-    public void createFilmGenre(@NotNull Film film) {
+    public void createFilmGenre(Film film) {
         String sqlQueryGenres = "INSERT INTO film_genre (film_id,genre_id) VALUES (?,?)";
         if (film.getGenres() != null) {
             for (Genre genre : film.getGenres()) {
@@ -50,15 +45,11 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public void updateFilmGenre(@NotNull Film film) {
+    public void updateFilmGenre(Film film) {
         String sqlQueryGenres = "DELETE FROM film_genre WHERE film_id = ?";
         jdbcTemplate.update(sqlQueryGenres, film.getId());
         this.createFilmGenre(film);
 
-    }
-
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(rs.getInt("id"), rs.getString("name"));
     }
 
     @Override
@@ -70,4 +61,7 @@ public class GenreDaoImpl implements GenreDao {
         }
     }
 
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+        return new Genre(rs.getInt("id"), rs.getString("name"));
+    }
 }

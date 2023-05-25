@@ -1,7 +1,6 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -22,40 +21,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class FilmDaoImpl implements FilmDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    private @NotNull Film makeFilm(@NotNull ResultSet rs, int rowNum) throws SQLException {
-
-        int mpaId = rs.getInt("rating_id");
-        String sqlQueryMpa = "SELECT * FROM rating_mpa WHERE id = ?";
-        Mpa mpa = jdbcTemplate.queryForObject(sqlQueryMpa, this::makeMpa, mpaId);
-
-        int filmId = rs.getInt("id");
-        String sqlQueryGenre = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM film_genre WHERE film_id = ?)";
-        List<Genre> genre = jdbcTemplate.query(sqlQueryGenre, this::makeGenre, filmId);
-
-        String sqlQueryLikes = "SELECT user_id FROM likes WHERE film_id = ?";
-        List<Integer> likes = jdbcTemplate.queryForList(sqlQueryLikes, Integer.class, filmId);
-
-        return new Film(rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                rs.getDate("release_date").toLocalDate(),
-                rs.getInt("duration"),
-                new HashSet<>(likes),
-                mpa,
-                new LinkedHashSet<>(genre));
-    }
-
     @Override
-    public Film createFilm(@NotNull Film film) {
+    public Film createFilm(Film film) {
         String sqlQuery = "INSERT INTO films (name,description,release_date,duration,rating_id) VALUES (?,?,?,?,?)";
         KeyHolder id = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -73,18 +45,20 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getAllFilms() {
-        String sqlQuery = "SELECT * FROM films";
+        String sqlQuery = "SELECT f.*,  rm.name AS mpa_name FROM films AS f " +
+                "LEFT JOIN rating_mpa AS rm ON f.rating_id = rm.id";
         return jdbcTemplate.query(sqlQuery, this::makeFilm);
     }
 
     @Override
     public Film getFilmById(int id) {
-        String sqlQuery = "SELECT * FROM films WHERE id = ?";
+        String sqlQuery = "SELECT f.*,  rm.name AS mpa_name FROM films AS f " +
+                "LEFT JOIN rating_mpa AS rm ON f.rating_id = rm.id WHERE f.id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::makeFilm, id);
     }
 
     @Override
-    public Film updateFilm(@NotNull Film film) {
+    public Film updateFilm(Film film) {
         String sqlQuery = "UPDATE films SET " +
                 "name = ?," +
                 "description = ?," +
@@ -118,6 +92,12 @@ public class FilmDaoImpl implements FilmDao {
         return new Mpa(rs.getInt("id"), rs.getString("name"));
     }
 
+
+    private List<Genre> getFilmGenres(int filmId) {
+        String sqlQueryGenre = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM film_genre WHERE film_id = ?)";
+        return jdbcTemplate.query(sqlQueryGenre, this::makeGenre, filmId);
+    }
+
     @Override
     public void isFilmExisted(int id) {
         String sqlQuery = "SELECT id FROM films WHERE id = ?";
@@ -126,4 +106,25 @@ public class FilmDaoImpl implements FilmDao {
             throw new NotFoundException("Film id: " + id + " does not exist...");
         }
     }
+
+    private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
+
+        Mpa mpa = new Mpa(rs.getInt("rating_id"), rs.getString("mpa_name"));
+
+        int filmId = rs.getInt("id");
+        List<Genre> genre = getFilmGenres(filmId);
+
+        String sqlQueryLikes = "SELECT user_id FROM likes WHERE film_id = ?";
+        List<Integer> likes = jdbcTemplate.queryForList(sqlQueryLikes, Integer.class, filmId);
+
+        return new Film(rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("release_date").toLocalDate(),
+                rs.getInt("duration"),
+                new HashSet<>(likes),
+                mpa,
+                new LinkedHashSet<>(genre));
+    }
+
 }

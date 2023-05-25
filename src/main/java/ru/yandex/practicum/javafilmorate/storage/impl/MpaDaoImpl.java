@@ -1,6 +1,6 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -13,14 +13,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MpaDaoImpl implements MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public MpaDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Mpa getMpaById(int id) {
@@ -35,10 +31,6 @@ public class MpaDaoImpl implements MpaDao {
         return jdbcTemplate.query(sqlQuery, this::makeMpa);
     }
 
-    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
-        return new Mpa(rs.getInt("id"), rs.getString("name"));
-    }
-
     @Override
     public void isMpaExisted(int id) {
         String sqlQuery = "SELECT name FROM rating_mpa WHERE id = ?";
@@ -46,5 +38,9 @@ public class MpaDaoImpl implements MpaDao {
         if (!rowSet.next()) {
             throw new NotFoundException("Mpa id: " + id + " does not exist...");
         }
+    }
+
+    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
+        return new Mpa(rs.getInt("id"), rs.getString("name"));
     }
 }

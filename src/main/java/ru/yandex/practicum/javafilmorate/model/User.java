@@ -1,6 +1,5 @@
 package ru.yandex.practicum.javafilmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +25,6 @@ public class User {
     @NotNull(message = "The birthday can't be empty")
     @PastOrPresent(message = "The birthday has to be before today")
     private LocalDate birthday;
-
-    @JsonIgnore
-    final Set<Integer> friends = new HashSet<>();
 
     public User(String login, String name, String email, LocalDate birthday) {
         this.login = login;

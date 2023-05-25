@@ -54,12 +54,11 @@ public class UserService {
     public void removeFriendById(int id, int friendId) {
         User user = getUserById(id);
         log.info("The friend with id = {}{}{}", friendId, " has been removed to the user with id = ", id);
-        user.getFriends().remove(friendId);
         userStorage.delete(id, friendId);
     }
 
     public List<User> getAllFriends(int id) {
-        List<User> friends = new ArrayList<>(userStorage.getAllFriends(id));
+        List<User> friends = new ArrayList<>();
         log.info("Get All friends");
         return friends;
     }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.javafilmorate.validation.FilmReleaseDate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ public class Film {
     private Integer duration;
     @JsonIgnore
     Set<Integer> likes = new HashSet<>();
+    @Valid @NotNull
     private Mpa mpa;
     private LinkedHashSet<Genre> genres;
 

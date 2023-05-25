@@ -1,9 +1,8 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -23,26 +22,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public UserDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    private @NotNull User makeUser(ResultSet rs, int rowNum) throws SQLException {
-        log.info("Make users");
-        return new User(rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("login"),
-                rs.getString("email"),
-                rs.getDate("birthday").toLocalDate());
-    }
-
     @Override
-    public User createUser(@NotNull User user) {
+    public User createUser(User user) {
         String sqlQuery = "INSERT INTO users (name,login,email,birthday) VALUES (?,?,?,?)";        //Используйте KeyHolder для получения идентификатора записи вставки Spring JdbcTemplate
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -66,7 +52,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User updateUser(@NotNull User user) {
+    public User updateUser(User user) {
         String sqlQuery = "UPDATE users SET " +
                 "name = ?," +
                 "login = ?," +
@@ -145,5 +131,14 @@ public class UserDaoImpl implements UserDao {
         if (!rowSet.next()) {
             throw new NotFoundException("User with id= " + id + " doesn't exist...");
         }
+    }
+
+    private User makeUser(ResultSet rs, int rowNum) throws SQLException {
+        log.info("Make users");
+        return new User(rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("login"),
+                rs.getString("email"),
+                rs.getDate("birthday").toLocalDate());
     }
 }
