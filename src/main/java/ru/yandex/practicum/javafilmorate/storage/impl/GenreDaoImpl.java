@@ -1,6 +1,7 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -10,25 +11,47 @@ import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.model.Genre;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 public class GenreDaoImpl implements GenreDao {
-
+    /*   @Override
+       public void createFilmGenre(Film film) {
+           String sqlQueryGenres = "INSERT INTO film_genre (film_id,genre_id) VALUES (?,?)";
+           if (film.getGenres() != null) {
+               for (Genre genre : film.getGenres()) {
+                   this.isGenreExisted(genre.getId());
+                   jdbcTemplate.update(sqlQueryGenres, film.getId(), genre.getId());
+               }
+           }
+       }*/
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void createFilmGenre(Film film) {
-        String sqlQueryGenres = "INSERT INTO film_genre (film_id,genre_id) VALUES (?,?)";
-        if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                this.isGenreExisted(genre.getId());
-                jdbcTemplate.update(sqlQueryGenres, film.getId(), genre.getId());
-            }
+        if (film.getGenres() == null || film.getGenres().isEmpty()) {
+            return;
         }
+        String sql = "INSERT INTO film_genre (film_id, genre_id) " +
+                "VALUES(?,?)";
+        List<Genre> genres = new ArrayList<>(film.getGenres());
+        jdbcTemplate.batchUpdate(sql,
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, film.getId());
+                        ps.setLong(2, genres.get(i).getId());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return film.getGenres().size();
+                    }
+                });
     }
 
     @Override
