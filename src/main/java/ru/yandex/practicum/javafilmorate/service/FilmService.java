@@ -12,7 +12,6 @@ import ru.yandex.practicum.javafilmorate.model.Film;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -57,20 +56,17 @@ public class FilmService {
         log.info("Film id: {} like from user: {} ", filmId, userId);
     }
 
-    public Film removeLikes(int filmId, int userID) {
-        if (filmId < 0 || userID < 0) {
+    public Film removeLikes(int filmId, int userId) {
+        if (filmId < 0 || userId < 0) {
             throw new NotFoundException("Negative value is not allowed");
         }
         Film film = getFilmById(filmId);
-        film.getLikes().remove(userID);
-        log.info("The user with id = {} remove a like from the film id = {}", userID, filmId);
+        filmStorage.deleteLike(filmId, userId);
+        log.info("The user with id = {} remove a like from the film id = {}", userId, filmId);
         return film;
     }
 
     public List<Film> favoritesFilms(Integer number) {
-        return filmStorage.getAllFilms().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(film -> film.getLikes().size())))
-                .limit(number)
-                .collect(Collectors.toList());
+        return filmStorage.getFavoritesFilms(number);
     }
 }

@@ -58,15 +58,14 @@ public class UserService {
     }
 
     public List<User> getAllFriends(int id) {
-        List<User> friends = new ArrayList<>();
+        List<User> friends = userStorage.getAllFriends(id);
         log.info("Get All friends");
         return friends;
     }
 
     public List<User> getCommonFriends(int userId, int friendId) {
         log.info("Get common friends");
-        List<User> friends = getAllFriends(userId);
-        friends.retainAll(getAllFriends(friendId));
+        List<User> friends = userStorage.getCommonFriends(userId, friendId);
         return friends;
 
     }

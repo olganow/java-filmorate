@@ -15,7 +15,6 @@ import ru.yandex.practicum.javafilmorate.model.Mpa;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +55,16 @@ public class FilmDaoImpl implements FilmDao {
                 "LEFT JOIN rating_mpa AS rm ON f.rating_id = rm.id WHERE f.id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::makeFilm, id);
     }
+
+    @Override
+    public List<Film> getFavoritesFilms(int id) {
+        String sqlQuery = "SELECT f.*, rm.name AS mpa_name FROM films AS f " +
+                "LEFT JOIN rating_mpa AS rm ON f.rating_id = rm.id " +
+                "LEFT JOIN likes AS l ON f.id = l.film_id " +
+                "GROUP BY f.id ORDER BY COUNT(l.user_id) DESC LIMIT ?";
+        return jdbcTemplate.query(sqlQuery, this::makeFilm, id);
+    }
+
 
     @Override
     public Film updateFilm(Film film) {
@@ -114,15 +123,11 @@ public class FilmDaoImpl implements FilmDao {
         int filmId = rs.getInt("id");
         List<Genre> genre = getFilmGenres(filmId);
 
-        String sqlQueryLikes = "SELECT user_id FROM likes WHERE film_id = ?";
-        List<Integer> likes = jdbcTemplate.queryForList(sqlQueryLikes, Integer.class, filmId);
-
         return new Film(rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDate("release_date").toLocalDate(),
                 rs.getInt("duration"),
-                new HashSet<>(likes),
                 mpa,
                 new LinkedHashSet<>(genre));
     }

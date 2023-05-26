@@ -3,6 +3,7 @@ package ru.yandex.practicum.javafilmorate.storage.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -87,10 +88,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getCommonFriends(int id, int friendId) {
-        String sqlQuery = "SELECT users.* " +
-                "FROM users " +
-                "JOIN FRIENDSHIP AS f1 on(users.id = f1.friend_id AND f1.user_id = ?) " +
-                "JOIN FRIENDSHIP AS f2 on (users.id = f2.friend_id AND f2.user_id =?)";
+        String sqlQuery = "SELECT * FROM users " +
+                "WHERE id IN (SELECT friend_user_id FROM friendship WHERE user_id = ?) " +
+                "AND id IN (SELECT friend_user_id FROM friendship WHERE user_id = ?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id, friendId);
         List<User> commonFriends = new ArrayList<>();
         while (rs.next()) {
@@ -105,7 +105,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> getAllFriends(int id) {
+    public @NotNull List<User> getAllFriends(int id) {
         String sqlQuery = "SELECT * FROM users WHERE id IN " +
                 "(SELECT friend_user_id AS id FROM friendship WHERE user_id = ?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id);

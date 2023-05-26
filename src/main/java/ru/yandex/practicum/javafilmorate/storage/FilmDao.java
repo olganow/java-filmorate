@@ -15,6 +15,7 @@ public interface FilmDao {
 
     Film updateFilm(Film film);
 
+    List<Film> getFavoritesFilms(int id);
 
     void createLike(int id, int userId);
 
