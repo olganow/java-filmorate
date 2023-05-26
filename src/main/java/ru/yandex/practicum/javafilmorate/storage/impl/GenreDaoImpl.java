@@ -19,16 +19,6 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class GenreDaoImpl implements GenreDao {
-    /*   @Override
-       public void createFilmGenre(Film film) {
-           String sqlQueryGenres = "INSERT INTO film_genre (film_id,genre_id) VALUES (?,?)";
-           if (film.getGenres() != null) {
-               for (Genre genre : film.getGenres()) {
-                   this.isGenreExisted(genre.getId());
-                   jdbcTemplate.update(sqlQueryGenres, film.getId(), genre.getId());
-               }
-           }
-       }*/
     private final JdbcTemplate jdbcTemplate;
 
     @Override

@@ -2,7 +2,6 @@ package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -53,7 +52,7 @@ public class FriendDaoImpl implements FriendDao {
     }
 
     @Override
-    public @NotNull List<User> getAllFriends(int id) {
+    public List<User> getAllFriends(int id) {
         String sqlQuery = "SELECT * FROM users WHERE id IN " +
                 "(SELECT friend_user_id AS id FROM friendship WHERE user_id = ?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, id);
@@ -66,9 +65,7 @@ public class FriendDaoImpl implements FriendDao {
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
         }
         log.info("Get All friends of user with id = {}", id);
-        for (User friend : friends) {
-            System.out.println(friend.toString());
-        }
+
         return friends;
     }
 
