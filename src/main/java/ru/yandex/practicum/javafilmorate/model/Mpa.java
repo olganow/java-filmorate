@@ -13,7 +13,9 @@ public class Mpa {
     @NotNull
     private Integer id;
     private String name;
-    @NotNull @Valid
+
+    @NotNull
+    @Valid
     public Mpa(Integer id, String name) {
         this.id = id;
         this.name = name;
