@@ -80,27 +80,9 @@ public class FilmDaoImpl implements FilmDao {
         return film;
     }
 
-    @Override
-    public void createLike(int id, int userId) {
-        String sqlQuery = "INSERT INTO likes (film_id, user_id) VALUES (?,?)";
-        jdbcTemplate.update(sqlQuery, id, userId);
-    }
-
-    @Override
-    public void deleteLike(int id, int userId) {
-        String sqlQuery = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
-        jdbcTemplate.update(sqlQuery, id, userId);
-    }
-
-
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return new Genre(rs.getInt("id"), rs.getString("name"));
     }
-
-    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
-        return new Mpa(rs.getInt("id"), rs.getString("name"));
-    }
-
 
     private List<Genre> getFilmGenres(int filmId) {
         String sqlQueryGenre = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM film_genre WHERE film_id = ?)";

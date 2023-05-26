@@ -3,6 +3,7 @@ package ru.yandex.practicum.javafilmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.javafilmorate.storage.FriendDao;
 import ru.yandex.practicum.javafilmorate.storage.UserDao;
 import ru.yandex.practicum.javafilmorate.model.User;
 
@@ -16,7 +17,7 @@ import java.util.*;
 public class UserService {
 
     private final UserDao userStorage;
-
+    private final FriendDao friendStorage;
 
     public User createUser(User user) {
         validateUserName(user);
@@ -46,7 +47,7 @@ public class UserService {
     public void addFriend(int id, int friendId) {
         userStorage.isUserExisted(id);
         userStorage.isUserExisted(friendId);
-        userStorage.addFriend(id, friendId);
+        friendStorage.addFriend(id, friendId);
         log.info("The friend with id = {} {} {}", friendId, " has been added to the user with id = ", id);
         log.info("The friend with id = {} {} {}", id, " has been added to the user with id = ", friendId);
     }
@@ -54,18 +55,18 @@ public class UserService {
     public void removeFriendById(int id, int friendId) {
         User user = getUserById(id);
         log.info("The friend with id = {}{}{}", friendId, " has been removed to the user with id = ", id);
-        userStorage.delete(id, friendId);
+        friendStorage.deleteFriend(id, friendId);
     }
 
     public List<User> getAllFriends(int id) {
-        List<User> friends = userStorage.getAllFriends(id);
+        List<User> friends = friendStorage.getAllFriends(id);
         log.info("Get All friends");
         return friends;
     }
 
     public List<User> getCommonFriends(int userId, int friendId) {
         log.info("Get common friends");
-        List<User> friends = userStorage.getCommonFriends(userId, friendId);
+        List<User> friends = friendStorage.getCommonFriends(userId, friendId);
         return friends;
 
     }

@@ -17,10 +17,6 @@ public interface FilmDao {
 
     List<Film> getFavoritesFilms(int id);
 
-    void createLike(int id, int userId);
-
-    void deleteLike(int id, int userId);
-
     void isFilmExisted(int id);
 
 }
