@@ -13,7 +13,6 @@ import ru.yandex.practicum.javafilmorate.model.Mpa;
 
 import javax.validation.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ class FilmDaoImplTest {
     void beforeEach() {
         filmSecond = new Film("Chicken Run", "Chicken Run is a 2000 stop-motion animated adventure " +
                 "comedy film produced by Pathé ",
-                LocalDate.of(2000, 12, 28), 5248345, new HashSet<>(),
+                LocalDate.of(2000, 12, 28), 5248345,
                 new Mpa(1, "G"), new LinkedHashSet<>());
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -55,7 +54,7 @@ class FilmDaoImplTest {
     @Test
     void shouldCreateFilm() {
         filmOne = new Film("Star Wars", "Star Wars is an American epic space opera created by George Lucas",
-                LocalDate.of(1977, 5, 25), 248345, new HashSet<>(),
+                LocalDate.of(1977, 5, 25), 248345,
                 new Mpa(3, "PG-13"), new LinkedHashSet<>());
         filmStorage.createFilm(filmOne);
         assertEquals("Star Wars", filmOne.getName(), "Film's name isn't correct");
