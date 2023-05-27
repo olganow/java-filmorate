@@ -39,7 +39,9 @@ public class FilmService {
 
     public List<Film> getAllFilms() {
         log.info("GET {} films", filmStorage.getAllFilms().size());
-        return filmStorage.getAllFilms();
+        List<Film> films = filmStorage.getAllFilms();
+        films = genreStorage.loadGenres(films);
+        return films;
     }
 
     public Film getFilmById(int id) {

@@ -53,4 +53,12 @@ public class Film {
         this.genres = genres;
     }
 
+    public void addGenre(Genre genre) {
+        if (genres == null) {
+            genres = new LinkedHashSet<>();
+        }
+        genres.add(genre);
+
+    }
+
 }

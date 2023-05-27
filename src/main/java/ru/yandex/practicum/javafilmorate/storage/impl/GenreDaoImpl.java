@@ -1,6 +1,7 @@
 package ru.yandex.practicum.javafilmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -15,9 +16,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GenreDaoImpl implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
 
@@ -76,5 +80,25 @@ public class GenreDaoImpl implements GenreDao {
 
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return new Genre(rs.getInt("id"), rs.getString("name"));
+    }
+
+    @Override
+    public List<Film> loadGenres(List<Film> films) {
+
+        final Map<Integer, Film> ids = films.stream().collect(Collectors.toMap(Film::getId, Function.identity()));
+        String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
+        final String sqlQuery = "SELECT * from genres g, film_genre fg where fg.genre_id = g.id AND fg.film_id in (" + inSql + ")";
+        jdbcTemplate.query(sqlQuery, (rs) -> {
+            //Получили из ResultSet'a идентификатор фильма и извлекли по нему из мапы значение)
+            if (!rs.wasNull()) {
+                final Film film = ids.get(rs.getInt("FILM_ID"));
+
+                //Добавили в коллекцию внутри объекта класса FIlm новый жанр)
+
+                film.addGenre(new Genre(rs.getInt("ID"), rs.getString("NAME")));
+            }
+            //Преобразуем коллекцию типа Film к Integer и в массив, так как передавать требуется именно его
+        }, films.stream().map(Film::getId).toArray());
+        return new ArrayList<>(ids.values());
     }
 }

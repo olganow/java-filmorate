@@ -9,15 +9,13 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.javafilmorate.storage.FilmDao;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Film;
-import ru.yandex.practicum.javafilmorate.model.Genre;
 import ru.yandex.practicum.javafilmorate.model.Mpa;
 
 import java.util.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 @Component
 @RequiredArgsConstructor
@@ -88,24 +86,8 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
-    public void loadGenres(List<Film> films) {
-        final Map<Integer, Film> ids = films.stream().collect(Collectors.toMap(Film::getId, Function.identity()));
-        String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
-        final String sqlQuery = "SELECT * from genres g, film_genre fg where fg.genre_id = g.id AND fg.film_id in (" + inSql + ")";
-        jdbcTemplate.query(sqlQuery, (rs) -> {
-        //Получили из ResultSet'a идентификатор фильма и извлекли по нему из мапы значение)
-        final Film film = getFilmById(rs.getInt("FILM_ID"));
-        //Добавили в коллекцию внутри объекта класса FIlm новый жанр)
-        makeGenre(rs, 0);
-        //Преобразуем коллекцию типа Film к Integer и в массив, так как передавать требуется именно его
-        }, films.stream().map(Film::getId).toArray());
-    }
-
-
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         Mpa mpa = new Mpa(rs.getInt("rating_id"), rs.getString("mpa_name"));
-        List<Film> films = getAllFilms();
-        loadGenres(films);
 
         return new Film(rs.getInt("id"),
                 rs.getString("name"),
@@ -113,11 +95,8 @@ public class FilmDaoImpl implements FilmDao {
                 rs.getDate("release_date").toLocalDate(),
                 rs.getInt("duration"),
                 mpa,
-               new LinkedHashSet<>()
+                new LinkedHashSet<>()
         );
     }
 
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(rs.getInt("id"), rs.getString("name"));
-    }
 }

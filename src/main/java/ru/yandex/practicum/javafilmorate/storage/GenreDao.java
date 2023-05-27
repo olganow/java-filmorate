@@ -18,4 +18,5 @@ public interface GenreDao {
 
     void isGenreExisted(int id);
 
+    List<Film> loadGenres(List<Film> films);
 }
