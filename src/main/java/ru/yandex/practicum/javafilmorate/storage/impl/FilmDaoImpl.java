@@ -10,6 +10,7 @@ import ru.yandex.practicum.javafilmorate.storage.FilmDao;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
 import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.model.Mpa;
+import ru.yandex.practicum.javafilmorate.storage.GenreDao;
 
 import java.util.*;
 import java.sql.PreparedStatement;
@@ -22,6 +23,7 @@ import java.sql.SQLException;
 public class FilmDaoImpl implements FilmDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final GenreDao genreDao;
 
     @Override
     public Film createFilm(Film film) {
@@ -89,7 +91,7 @@ public class FilmDaoImpl implements FilmDao {
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         Mpa mpa = new Mpa(rs.getInt("rating_id"), rs.getString("mpa_name"));
 
-        return new Film(rs.getInt("id"),
+        Film film = new Film(rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDate("release_date").toLocalDate(),
@@ -97,6 +99,7 @@ public class FilmDaoImpl implements FilmDao {
                 mpa,
                 new LinkedHashSet<>()
         );
+        return genreDao.loadGenres(List.of(film)).stream().findFirst().get();
     }
 
 }

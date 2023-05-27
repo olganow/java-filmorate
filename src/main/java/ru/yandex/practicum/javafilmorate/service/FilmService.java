@@ -46,7 +46,8 @@ public class FilmService {
 
     public Film getFilmById(int id) {
         filmStorage.isFilmExisted(id);
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        return genreStorage.loadGenres(List.of(film)).get(0);
     }
 
     public void addLikes(int filmId, int userId) {
