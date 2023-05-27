@@ -12,12 +12,12 @@ import ru.yandex.practicum.javafilmorate.model.Film;
 import ru.yandex.practicum.javafilmorate.model.Genre;
 import ru.yandex.practicum.javafilmorate.model.Mpa;
 
+import java.util.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -65,7 +65,6 @@ public class FilmDaoImpl implements FilmDao {
         return jdbcTemplate.query(sqlQuery, this::makeFilm, id);
     }
 
-
     @Override
     public Film updateFilm(Film film) {
         String sqlQuery = "UPDATE films SET " +
@@ -80,15 +79,6 @@ public class FilmDaoImpl implements FilmDao {
         return film;
     }
 
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(rs.getInt("id"), rs.getString("name"));
-    }
-
-    private List<Genre> getFilmGenres(int filmId) {
-        String sqlQueryGenre = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM film_genre WHERE film_id = ?)";
-        return jdbcTemplate.query(sqlQueryGenre, this::makeGenre, filmId);
-    }
-
     @Override
     public void isFilmExisted(int id) {
         String sqlQuery = "SELECT id FROM films WHERE id = ?";
@@ -98,12 +88,24 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
+    public void loadGenres(List<Film> films) {
+        final Map<Integer, Film> ids = films.stream().collect(Collectors.toMap(Film::getId, Function.identity()));
+        String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
+        final String sqlQuery = "SELECT * from genres g, film_genre fg where fg.genre_id = g.id AND fg.film_id in (" + inSql + ")";
+        jdbcTemplate.query(sqlQuery, (rs) -> {
+        //Получили из ResultSet'a идентификатор фильма и извлекли по нему из мапы значение)
+        final Film film = getFilmById(rs.getInt("FILM_ID"));
+        //Добавили в коллекцию внутри объекта класса FIlm новый жанр)
+        makeGenre(rs, 0);
+        //Преобразуем коллекцию типа Film к Integer и в массив, так как передавать требуется именно его
+        }, films.stream().map(Film::getId).toArray());
+    }
+
+
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
-
         Mpa mpa = new Mpa(rs.getInt("rating_id"), rs.getString("mpa_name"));
-
-        int filmId = rs.getInt("id");
-        List<Genre> genre = getFilmGenres(filmId);
+        List<Film> films = getAllFilms();
+        loadGenres(films);
 
         return new Film(rs.getInt("id"),
                 rs.getString("name"),
@@ -111,7 +113,11 @@ public class FilmDaoImpl implements FilmDao {
                 rs.getDate("release_date").toLocalDate(),
                 rs.getInt("duration"),
                 mpa,
-                new LinkedHashSet<>(genre));
+               new LinkedHashSet<>()
+        );
     }
 
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+        return new Genre(rs.getInt("id"), rs.getString("name"));
+    }
 }
