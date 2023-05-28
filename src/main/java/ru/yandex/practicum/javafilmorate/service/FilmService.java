@@ -40,14 +40,15 @@ public class FilmService {
     public List<Film> getAllFilms() {
         log.info("GET {} films", filmStorage.getAllFilms().size());
         List<Film> films = filmStorage.getAllFilms();
-        films = genreStorage.loadGenres(films);
+        genreStorage.loadGenres(films);
         return films;
     }
 
     public Film getFilmById(int id) {
         filmStorage.isFilmExisted(id);
         Film film = filmStorage.getFilmById(id);
-        return genreStorage.loadGenres(List.of(film)).get(0);
+        genreStorage.loadGenres(List.of(film));
+        return film;
     }
 
     public void addLikes(int filmId, int userId) {

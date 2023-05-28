@@ -83,7 +83,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Film> loadGenres(List<Film> films) {
+    public void loadGenres(List<Film> films) {
 
         final Map<Integer, Film> ids = films.stream().collect(Collectors.toMap(Film::getId, Function.identity()));
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
@@ -99,6 +99,5 @@ public class GenreDaoImpl implements GenreDao {
             }
             //Преобразуем коллекцию типа Film к Integer и в массив, так как передавать требуется именно его
         }, films.stream().map(Film::getId).toArray());
-        return new ArrayList<>(ids.values());
     }
 }
