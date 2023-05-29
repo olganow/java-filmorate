@@ -1,82 +1,74 @@
 package ru.yandex.practicum.javafilmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.javafilmorate.storage.*;
 import ru.yandex.practicum.javafilmorate.exception.NotFoundException;
-import ru.yandex.practicum.javafilmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.javafilmorate.model.Film;
-import ru.yandex.practicum.javafilmorate.storage.FilmStorage;
+
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-@Slf4j
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class FilmService {
-    private final FilmStorage filmStorage;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
+    private final FilmDao filmStorage;
+    private final UserDao userStorage;
+    private final MpaDao daoStorage;
+    private final GenreDao genreStorage;
+    private final LikeDao likeStorage;
 
     public Film createFilm(Film film) {
+        daoStorage.isMpaExisted(film.getMpa().getId());
+        filmStorage.createFilm(film);
+        genreStorage.createFilmGenre(film);
         log.info("Create a film with id = {} ", film.getId());
-        return filmStorage.createFilm(film);
+        return film;
     }
 
     public Film updateFilm(Film film) {
+        filmStorage.isFilmExisted(film.getId());
+        genreStorage.updateFilmGenre(film);
+        daoStorage.isMpaExisted(film.getMpa().getId());
+        filmStorage.updateFilm(film);
         log.info("Update the film with id = {} ", film.getId());
-        return filmStorage.updateFilm(film);
+        return film;
     }
 
     public List<Film> getAllFilms() {
         log.info("GET {} films", filmStorage.getAllFilms().size());
-        return filmStorage.getAllFilms();
+        List<Film> films = filmStorage.getAllFilms();
+        genreStorage.loadGenres(films);
+        return films;
     }
 
-    public Film getFilmById(int filmId) {
-        Optional<Film> film = filmStorage.getFilmById(filmId);
-        if (film.isPresent()) {
-            log.info("Get the film with id = {} ", filmId);
-            return film.get();
-        } else {
-            throw new NotFoundException("The film with id =" + filmId + " not found");
-        }
+    public Film getFilmById(int id) {
+        filmStorage.isFilmExisted(id);
+        Film film = filmStorage.getFilmById(id);
+        genreStorage.loadGenres(List.of(film));
+        return film;
     }
 
-    public Film addLikes(int filmId, int userId) {
-        Film film = getFilmById(filmId);
-        if (!film.getLikes().contains(userId)) {
-            film.getLikes().add(userId);
-            log.info("A like added to the film with id = {} ", filmId);
-            return film;
-        } else {
-            log.debug("The user doesn't found");
-            throw new UserAlreadyExistException("The user doesn't found");
-        }
+    public void addLikes(int filmId, int userId) {
+        filmStorage.isFilmExisted(filmId);
+        userStorage.isUserExisted(userId);
+        likeStorage.createLike(filmId, userId);
+        log.info("Film id: {} like from user: {} ", filmId, userId);
     }
 
-    public Film removeLikes(int filmId, int userID) {
-        if (filmId < 0 || userID < 0) {
+    public Film removeLikes(int filmId, int userId) {
+        if (filmId < 0 || userId < 0) {
             throw new NotFoundException("Negative value is not allowed");
         }
         Film film = getFilmById(filmId);
-        film.getLikes().remove(userID);
-        log.info("The user with id = {} remove a like from the film id = {}", userID, filmId);
+        likeStorage.deleteLike(filmId, userId);
+        log.info("The user with id = {} remove a like from the film id = {}", userId, filmId);
         return film;
     }
 
     public List<Film> favoritesFilms(Integer number) {
-        return filmStorage.getAllFilms().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(film -> film.getLikes().size())))
-                .limit(number)
-                .collect(Collectors.toList());
+        return filmStorage.getFavoritesFilms(number);
     }
 }
-
-
-
-
-

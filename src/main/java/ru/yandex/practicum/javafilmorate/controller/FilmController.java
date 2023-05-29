@@ -55,7 +55,6 @@ public class FilmController {
         filmService.removeLikes(id, userId);
     }
 
-
     @GetMapping("/popular")
     public List<Film> getTopFilms(@Positive @RequestParam(value = "count", defaultValue = "10") int count) {
         log.debug("Get favorite films");
