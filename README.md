@@ -61,3 +61,12 @@ LEFT JOIN friendship AS fr ON fr.user_id=f.user_id
 LEFT JOIN friend_status AS fs ON fs.friend_status_id=fr.friend_status_id
 WHERE fs.status = 'confirmed' ;
 ```
+
+### Тестирование
+
+В данном проекте добавлен с Spring Boot и с использованием нотации @SpringBootTest написано 26 юнит тестов.
+
+### Групповой проект
+
+Дальнейшая разработка данного приложения была реализована в групповом проекте.
+https://github.com/CyberCoHuK/java-filmorate
